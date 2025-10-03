@@ -37,7 +37,7 @@ jobs:
       - name: Install pxt CLI
         run: npm install -g pxt
 
-      # If your fork lacks a lockfile, npm ci fails → we fall back to npm install
+      # Some forks lack a lockfile; fall back to npm install
       - name: Install target deps
         run: |
           if [ -f package-lock.json ]; then
@@ -46,15 +46,37 @@ jobs:
             npm install
           fi
 
-      # Build a static site to ./built
+      # Build a static site
       - name: Build static package
         run: pxt staticpkg
+
+      # Find the folder that actually contains index.html (varies by pxt version)
+      - name: Detect output dir
+        id: detect
+        run: |
+          set -e
+          CANDIDATES=("built/packaged" "built/web" "built")
+          OUTDIR=""
+          for d in "${CANDIDATES[@]}"; do
+            if [ -f "$d/index.html" ]; then
+              OUTDIR="$d"
+              break
+            fi
+          done
+          if [ -z "$OUTDIR" ]; then
+            echo "No index.html found in built/packaged, built/web, or built"
+            echo "Contents of built/ (if any):"
+            ls -la built || true
+            exit 1
+          fi
+          echo "OUTDIR=$OUTDIR" >> "$GITHUB_ENV"
+          echo "Detected OUTDIR: $OUTDIR"
 
       # Upload the built site for GitHub Pages to deploy
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./built
+          path: ${{ env.OUTDIR }}
 
   deploy:
     needs: build
