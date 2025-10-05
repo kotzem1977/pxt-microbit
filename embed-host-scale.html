@@ -2,27 +2,38 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>MakeCode (Full Editor)</title>
+  <title>MakeCode (Full Editor — Top Level)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    html, body { height: 100%; margin: 0; }
-    #app { position: fixed; inset: 0; background: #000; }
-    #app > iframe {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      border: 0; background: #000;
-    }
+    html, body { height: 100%; margin: 0; background:#000; color:#fff; font-family: system-ui, Arial, sans-serif; }
+    #wrap { display:flex; align-items:center; justify-content:center; height:100%; text-align:center; padding:24px; }
+    a { color:#9dd2ff; }
   </style>
+  <script>
+    (function () {
+      // Always run the MakeCode editor as the TOP window to avoid "embedded mode"
+      var url = 'index.html#editor';
+      try {
+        if (window.top !== window.self) {
+          // Break out of iframe to top-level
+          window.top.location.replace(url);
+        } else {
+          // We are already top-level: just go to the editor
+          window.location.replace(url);
+        }
+      } catch (e) {
+        // If cross-origin blocks access, fall back to normal navigation
+        window.location.href = url;
+      }
+    })();
+  </script>
 </head>
 <body>
-  <div id="app">
-    <iframe
-      title="MakeCode Editor"
-      src="index.html#editor"
-      allow="camera; microphone; fullscreen; clipboard-write; gamepad; usb; serial"
-      allowfullscreen
-      referrerpolicy="no-referrer">
-    </iframe>
+  <div id="wrap">
+    <div>
+      <h1>Launching MakeCode…</h1>
+      <p>If you are not redirected automatically, <a href="index.html#editor">click here</a>.</p>
+    </div>
   </div>
 </body>
 </html>
