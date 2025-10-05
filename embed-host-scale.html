@@ -2,47 +2,27 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>MakeCode (Embedded Host · Message-Scale)</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MakeCode (Full Editor)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    html,body{height:100%;margin:0}
-    #app{position:fixed;inset:0;overflow:hidden;background:#000}
-    iframe#mc{position:absolute;inset:0;border:0;width:100%;height:100%}
+    html, body { height: 100%; margin: 0; }
+    #app { position: fixed; inset: 0; background: #000; }
+    #app > iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: 0; background: #000;
+    }
   </style>
 </head>
 <body>
   <div id="app">
-    <iframe id="mc"
+    <iframe
       title="MakeCode Editor"
-      src="./#editor"
+      src="index.html#editor"
       allow="camera; microphone; fullscreen; clipboard-write; gamepad; usb; serial"
       allowfullscreen
       referrerpolicy="no-referrer">
     </iframe>
   </div>
-
-  <script>
-    function setScale(s){
-      const f = document.getElementById('mc');
-      f.style.transformOrigin = 'top left';
-      f.style.transform = 'scale(' + s + ')';
-      f.style.width  = (100 / s) + '%';
-      f.style.height = (100 / s) + '%';
-    }
-
-    // Default to 1 or ?scale=
-    const p = new URLSearchParams(location.search);
-    setScale(Number(p.get('scale') || '1') || 1);
-
-    // Parent can adjust later:
-    // window.postMessage({type:'pxt-set-scale', value:0.67}, '*')
-    window.addEventListener('message', (ev)=>{
-      const d = ev.data || {};
-      if (d && d.type === 'pxt-set-scale') {
-        const v = Number(d.value || 1);
-        if (v >= 0.5 && v <= 1.25) setScale(v);
-      }
-    });
-  </script>
 </body>
 </html>
