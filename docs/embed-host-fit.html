@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MakeCode (Embedded Host · Fit)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    html,body{height:100%;margin:0}
+    #app{position:fixed;inset:0;overflow:hidden;background:#000}
+    iframe#mc{position:absolute;border:0;top:0;left:0}
+  </style>
+</head>
+<body>
+  <div id="app">
+    <iframe id="mc"
+      title="MakeCode Editor"
+      src="./#editor"
+      allow="camera; microphone; fullscreen; clipboard-write; gamepad; usb; serial"
+      allowfullscreen
+      referrerpolicy="no-referrer">
+    </iframe>
+  </div>
+
+  <script>
+    // Basic "fit" logic: let us shrink to fit a smaller iframe host.
+    function applyScale(s) {
+      const f = document.getElementById('mc');
+      f.style.transformOrigin = 'top left';
+      f.style.transform = 'scale(' + s + ')';
+      f.style.width  = (100 / s) + '%';
+      f.style.height = (100 / s) + '%';
+    }
+
+    // Default scale from query (?scale=0.75) else try a heuristic
+    const p = new URLSearchParams(location.search);
+    let s = Number(p.get('scale') || '0');
+    if (!s) {
+      // Heuristic: if the host iframe is narrow, scale down
+      const w = window.innerWidth;
+      if (w < 980) s = 0.75;
+      else if (w < 1200) s = 0.85;
+      else s = 1;
+    }
+    applyScale(s);
+
+    // Allow dynamic resize via postMessage: {type:'pxt-set-scale', value:0.67}
+    window.addEventListener('message', (ev)=>{
+      const d = ev.data || {};
+      if (d && d.type === 'pxt-set-scale') {
+        const v = Number(d.value || 1);
+        if (v > 0.5 && v <= 1.25) applyScale(v);
+      }
+    });
+  </script>
+</body>
+</html>
