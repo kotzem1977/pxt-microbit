@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MakeCode (Embedded Host · Minimal)</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    html,body{height:100%;margin:0}
+    /* The iframe fills this page (which will be iframed by Apps Script) */
+    #app{position:fixed;inset:0;overflow:hidden;background:#000}
+    /* When this page is iframed, add a hint class */
+    .is-embedded .simulator { max-width:360px; }
+    .is-embedded .editor-sidebar { max-width:380px; }
+    iframe#mc{position:absolute;inset:0;border:0;width:100%;height:100%}
+  </style>
+</head>
+<body>
+  <div id="app">
+    <iframe id="mc"
+      title="MakeCode Editor"
+      src="./#editor"
+      allow="camera; microphone; fullscreen; clipboard-write; gamepad; usb; serial"
+      allowfullscreen
+      referrerpolicy="no-referrer">
+    </iframe>
+  </div>
+
+  <script>
+    // Add a class if this page is embedded in another site
+    try {
+      if (window.top !== window.self) document.documentElement.classList.add('is-embedded');
+    } catch (_) {}
+
+    // Support simple scale via ?scale=0.67
+    (function () {
+      const p = new URLSearchParams(location.search);
+      const s = Number(p.get('scale') || '1');
+      if (s && s !== 1) {
+        const f = document.getElementById('mc');
+        f.style.transformOrigin = 'top left';
+        f.style.transform = 'scale(' + s + ')';
+        f.style.width  = (100 / s) + '%';
+        f.style.height = (100 / s) + '%';
+      }
+    })();
+  </script>
+</body>
+</html>
